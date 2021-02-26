@@ -1,0 +1,56 @@
+version: "3.7"
+
+services: 
+  nginx: 
+    image: nginx:1.17.5-alpine
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+    depends_on:
+      - agendav
+    volumes:
+      - agendav_www:/var/www/agendav
+      - type: bind
+        source: ./nginx/agendav.conf
+        target: /etc/nginx/conf.d/default.conf
+
+  db:
+    image: mariadb:latest
+    environment:
+      MYSQL_DATABASE: ${AGENDAV_DB_DATABASE}
+      MYSQL_USER: ${AGENDAV_DB_USER}
+      MYSQL_PASSWORD: ${AGENDAV_DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${AGENDAV_DB_ROOT_PASSWORD}
+    volumes:
+      - agendav_data:/var/lib/mysql
+
+  agendav:
+    build:
+      context: .
+      args:
+        AGENDAV_VERSION: ${AGENDAV_VERSION}
+    image: agendav:${AGENDAV_VERSION}
+    command: "-d date.timezone=${AGENDAV_TIMEZONE}"
+    depends_on:
+      - db
+    environment:
+      - AGENDAV_TITLE=${AGENDAV_TITLE}
+      - AGENDAV_FOOTER=${AGENDAV_FOOTER}
+      - AGENDAV_CSRF_SECRET=${AGENDAV_CSRF_SECRET}
+      - AGENDAV_CALDAV_SERVER=${AGENDAV_CALDAV_SERVER}
+      - AGENDAV_CALDAV_PUBLICURL=${AGENDAV_CALDAV_PUBLICURL}
+      - AGENDAV_TIMEZONE=${AGENDAV_TIMEZONE}
+      - AGENDAV_LANG=${AGENDAV_LANG}
+      - AGENDAV_LOG_DIR=${AGENDAV_LOG_DIR}
+      - AGENDAV_LOG_LEVEL=${AGENDAV_LOG_LEVEL}
+      - AGENDAV_CALDAV_AUTH_METHOD=${AGENDAV_CALDAV_AUTH_METHOD}
+      - AGENDAV_DB_HOST=${AGENDAV_DB_HOST}
+      - AGENDAV_DB_DATABASE=${AGENDAV_DB_DATABASE}
+      - AGENDAV_DB_USER=${AGENDAV_DB_USER}
+      - AGENDAV_DB_PASSWORD=${AGENDAV_DB_PASSWORD}
+    volumes:
+      - agendav_www:/var/www/agendav
+  
+volumes:
+  agendav_data:
+    name: agendav_data
+  agendav_www:
+    name: agendav_www
