@@ -7,7 +7,7 @@ Dockerized agendav.
 1. Clone the repository and go to the new directory:
 
 ```bash
-git clone git@gitlab.agence-ohana.fr:r-d/admin/agendav.git
+git clone https://github.com/Ohana-France/agendav.git
 cd agendav
 ```
 2. Build 
@@ -24,7 +24,7 @@ The full stack uses nginx to serve the application, mariadb as a database backen
 1. Clone the repository and go to the new directory:
 
 ```bash
-git clone git@gitlab.agence-ohana.fr:r-d/admin/agendav.git
+git clone https://github.com/Ohana-France/agendav.git
 cd agendav
 ```
 
@@ -45,7 +45,7 @@ For passwords and secrets generation, use this:
 
 4. Get the agendav image
 
-You can fetch the image from a registry (ie. https://registry.agence-ohana.fr/internal/agendav) or build it locally. 
+You can fetch the image from a registry (ie. ohanafrance/agendav) or build it locally. 
 
 To get the image from the registry, adjust your service definiton:
 ```yml
@@ -58,7 +58,7 @@ To get the image from the registry, adjust your service definiton:
     #     AGENDAV_VERSION: ${AGENDAV_VERSION}
 
     # Set the full image path:
-    image: https://registry.agence-ohana.fr/internal/agendav
+    image: ohanafrance/agendav
 # ...
 ```
 
